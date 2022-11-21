@@ -60,10 +60,13 @@ void main()
 */
 
 	//debugging statement for writeSector
-	writeSector("hi world", 30);
+	//writeSector("hi world", 30);
 
 	//call handleInterrupt21 to make our own interrupts!
 	makeInterrupt21();
+
+	//debugging for writeSector interrupt
+	interrupt(0x21, 6, "hello David", 30, 0);
 
 	//nothing passed, used for "21 works" message in handleInterrupt21 function below (debugging statement)
 	//interrupt(0x21, 0, 0, 0, 0);
@@ -411,7 +414,11 @@ void handleInterrupt21(int ax, int bx, int cx, int dx)
 	{
 		terminate();
 	}
-	else if(ax >= 6)
+	else if(ax == 6)
+	{
+		writeSector(bx, cx);
+	}
+	else if(ax >= 7)
 	{
 		printString("Invalid value for AX. No function available! Please try again.");
 	}
