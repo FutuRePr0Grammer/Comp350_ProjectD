@@ -2,6 +2,7 @@
 int fileType(char* string);
 int executeFile(char* string);
 int listDir(char* string);
+int deleteFile(char* string);
 int main2();
 
 //void type(char* filename);
@@ -13,6 +14,7 @@ int main(){
 char type [] = "type";
 char execute [] = "exec";
 char dir [] = "dir";
+char del [] = "del";
 
 char lines[100];
 char badCommand [] = "File Not Found, Try again \r \n";
@@ -100,6 +102,14 @@ int main2()
 				syscall(0, "\r\n", 0, 0);
 			}
 		}
+		else if(deleteFile(lines) == 1)
+		{
+			//debugging statements
+			syscall(0, "del command read successfully! File name being pased is: ", 0, 0);
+			syscall(0, lines + 4, 0, 0);
+
+			syscall(7, lines + 4, 0, 0);
+		}
 
 		else
 		{
@@ -180,6 +190,25 @@ int listDir(char* string)
 //		syscall(0, string[i], 0, 0);
 //		syscall(0, dir[i], 0, 0);
 		if(string[i] != dir[i])
+		{
+			index = 0;
+			break;
+		}
+
+		i++;
+	}
+	return index;
+}
+
+// function to recognize 'del' command
+int deleteFile(char* string)
+{
+	int i = 0;
+	int index = 1;
+	
+	while(i < 3) //searching for 'del'
+	{
+		if(string[i] != del[i])
 		{
 			index = 0;
 			break;

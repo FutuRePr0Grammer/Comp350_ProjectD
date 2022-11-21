@@ -10,6 +10,7 @@ void writeSector(char* buffer, int sector);
 void readFile(char* filename, char* buffer2, int* sectorsRead);
 void writeFile(char* buffer, char* filename, int numberOfSectors);
 void executeProgram(char* name);
+void deleteFile(char* filename);
 void handleInterrupt21(int ax, int bx, int cx, int dx);
 void terminate();
 
@@ -377,6 +378,38 @@ void executeProgram(char * name)
 	launchProgram(0x2000);
 }
 
+void deleteFile(char* filename)
+{
+	int fileentry;
+	int sectorsRead;
+	
+	//arrays to hold the directory and the map (which says which sectors are full or not for file placement)
+	char dir[512];
+	char map[512];
+
+	char buffer[13312];
+
+	//debugging to make sure deleteFile is accessed
+	printString("deleteFile in kernel.c was accessed");
+
+	//read the directory (sector 2) into the dir array, map (sector 1) into the map array using readSector
+	readSector(2, map, 1);
+	readSector(2, dir, 2);
+
+	//search for the filename to be deleted
+	//resets sectorsRead to 0 in case it has been used previously
+	sectorsRead = 0;
+	readFile(0x21, 3, filename, buffer, &sectorsRead);
+	if(sectorsRead > 0)
+	{
+		printString("Deleting file found the file");
+		printString(buffer); /*print the file*/
+	}
+	else
+		/*no sectors read? then print an error*/
+		printString("file does not exist to be deleted\r\n");
+}
+
 
 //makes interrupt 21 based on function in kernel.asm. Stores our code in the interrupt vector table at the base of memory
 //when interrupt 21 happens, goes to the table in memory, executes our code
@@ -418,7 +451,11 @@ void handleInterrupt21(int ax, int bx, int cx, int dx)
 	{
 		writeSector(bx, cx);
 	}
-	else if(ax >= 7)
+	else if(ax == 7)
+	{
+		deleteFile(bx);
+	}
+	else if(ax >= 8)
 	{
 		printString("Invalid value for AX. No function available! Please try again.");
 	}
