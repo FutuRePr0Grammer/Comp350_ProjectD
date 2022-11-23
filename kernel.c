@@ -67,7 +67,7 @@ void main()
 	makeInterrupt21();
 
 	//debugging for writeSector interrupt
-	interrupt(0x21, 6, "hello David", 30, 0);
+	//interrupt(0x21, 6, "hello David", 30, 0);
 
 	//nothing passed, used for "21 works" message in handleInterrupt21 function below (debugging statement)
 	//interrupt(0x21, 0, 0, 0, 0);
@@ -83,12 +83,15 @@ void main()
 	//call interrupt 21 with ax = 4 to print the error message
 	interrupt(0x21, 4, 0, 0, 0);
 */	//call interrupt 21 to readFile
+
+/*
 	interrupt(0x21, 3, "messag", buffer2, &sectorsRead);
 	if(sectorsRead > 0)
-		interrupt(0x21, 0, buffer2, 0, 0); /*print the file*/
+		interrupt(0x21, 0, buffer2, 0, 0); //print the file
 	else
-		/*no sectors read? then print an error*/
+		//no sectors read? then print an error
 		interrupt(0x21, 0, "messag not found\r\n", 0, 0);
+*/
 
 	//TEST FOR EXECUTEPROGRAM
 	//executeProgram("tstpr1");
@@ -391,15 +394,16 @@ void deleteFile(char* filename)
 
 	//debugging to make sure deleteFile is accessed
 	printString("deleteFile in kernel.c was accessed");
+	//interrupt(0x21, 0, "deleteFile in kernel.c was accessed", 0, 0);
 
 	//read the directory (sector 2) into the dir array, map (sector 1) into the map array using readSector
-	readSector(2, map, 1);
-	readSector(2, dir, 2);
+	readSector(map, 1);
+	readSector(dir, 2);
 
 	//search for the filename to be deleted
 	//resets sectorsRead to 0 in case it has been used previously
 	sectorsRead = 0;
-	readFile(0x21, 3, filename, buffer, &sectorsRead);
+	readFile(filename, buffer, &sectorsRead);
 	if(sectorsRead > 0)
 	{
 		printString("Deleting file found the file");
