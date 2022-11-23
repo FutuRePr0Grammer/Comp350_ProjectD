@@ -404,14 +404,18 @@ void deleteFile(char* filename)
 	//resets sectorsRead to 0 in case it has been used previously
 	sectorsRead = 0;
 	readFile(filename, buffer, &sectorsRead);
+
+/*
+	//debugging, should print the contents of the file, works! For some reason, other printString calls don't work.
 	if(sectorsRead > 0)
 	{
-		printString("Deleting file found the file");
-		printString(buffer); /*print the file*/
+		//printString("Deleting file found the file");
+		printString(buffer); //print the file
 	}
 	else
-		/*no sectors read? then print an error*/
-		printString("file does not exist to be deleted\r\n");
+		//no sectors read? then print an error
+		//printString("file does not exist to be deleted\r\n");
+*/
 }
 
 
