@@ -103,6 +103,9 @@ void main()
 //	interrupt(0x21, 4, "tstpr2", 0, 0);
 
 
+	//test call for writeFile
+	interrupt(0x21, 8, "this is a test message", "testmg", 3);	
+
 	//call shell
 	interrupt(0x21, 4, "shell", 0, 0);
 
@@ -338,11 +341,47 @@ void readFile(char* filename, char* buffer2, int* sectorsRead)
 
 void writeFile(char* buffer, char* filename, int numberOfSectors)
 {
-/*
+
 	char map[512];
 	char dir[512];
 	int sectorNumber = 0;
+
+	int entry;
+
+	int directoryLocation;
+
+	readSector(map, 1);
+	readSector(dir, 2);
+
+	//find empty directory entry (one that begins with 0), which will be where the new file is placed in the directory
+	for(entry = 0; entry < 512; entry += 32)
+	{
+		if(dir[entry] == 0)
+		{
+			dir[entry] = filename;
+			directoryLocation = entry;
+			break;
+		}
+	}
+
+
 	
+	//find empty sector in the map to figure out where to put the file in memory (start at 3 so don't overwrite the bootloader etc.)
+	for(sectorNumber = 3; sectorNumber < 512; sectorNumber++)
+	{
+		if(map[sectorNumber] == 0)
+		{
+			map[sectorNumber] = 0xff;
+			//put sector number for the file in the 6th byte of the directory entry for that file
+			dir[directoryLocation + 6] = sectorNumber;
+			//write the contents of the buffer (the contents of the file) into that sector using writeSector
+			writeSector(buffer, sectorNumber);
+			break;
+		}
+	}
+
+	
+	/*
 	while(sectorNumber = 3; sectorNumber < 512; sectorNumber++)
 	{
 		if(map[sectorNumber] == 0)
@@ -350,7 +389,11 @@ void writeFile(char* buffer, char* filename, int numberOfSectors)
 			
 		}	
 	}
-*/
+	*/
+
+	//write the map and directory back to the disk
+	writeSector(map, 1);
+	writeSector(dir, 2);
 }
 
 
@@ -496,7 +539,11 @@ void handleInterrupt21(int ax, int bx, int cx, int dx)
 	{
 		deleteFile(bx);
 	}
-	else if(ax >= 8)
+	else if(ax == 8)
+	{
+		writeFile(bx, cx, dx);
+	}
+	else if(ax >= 9)
 	{
 		printString("Invalid value for AX. No function available! Please try again.");
 	}
