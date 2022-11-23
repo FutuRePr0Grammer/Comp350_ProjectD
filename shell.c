@@ -105,8 +105,9 @@ int main2()
 		else if(deleteFile(lines) == 1)
 		{
 			//debugging statements
-			syscall(0, "del command read successfully! File name being pased is: ", 0, 0);
-			syscall(0, lines + 4, 0, 0);
+			syscall(0, "del command read successfully", 0, 0);
+			//syscall(0, "del command read successfully! File name being pased is: ", 0, 0);
+			//syscall(0, lines + 4, 0, 0);
 
 			syscall(7, lines + 4, 0, 0);
 		}
