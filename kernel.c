@@ -392,8 +392,12 @@ void deleteFile(char* filename)
 
 	char buffer[13312];
 
-	//debugging to make sure deleteFile is accessed
-	printString("deleteFile in kernel.c was accessed");
+	int entry;
+	int sector;
+	int i;
+
+	//debugging to make sure deleteFile is accessed - doesn't print because why WOULD IT JUST WORK?!
+	//printString("deleteFile in kernel.c was accessed");
 	//interrupt(0x21, 0, "deleteFile in kernel.c was accessed", 0, 0);
 
 	//read the directory (sector 2) into the dir array, map (sector 1) into the map array using readSector
@@ -404,6 +408,33 @@ void deleteFile(char* filename)
 	//resets sectorsRead to 0 in case it has been used previously
 	sectorsRead = 0;
 	readFile(filename, buffer, &sectorsRead);
+
+	//if found file, need to set first byte to 0 and make the address available in the map
+	if(sectorsRead > 0)
+	{	
+		for(entry = 0; entry < 512; entry += 32)
+		{
+			if(dir[entry] == filename[0])
+			{
+				//printChar(filename[0]);
+				//printChar(dir[entry]);
+				
+				//points to first letter of name. Add 6 to get where sector number is for map
+				dir[entry] = 0x0;
+				sector = dir[entry + 6];
+				map[sector] = 0x0;
+			}
+		}
+		/*
+		for(entry = 0; entry < 512; entry += 32)
+		{
+			for(i = 0; i < 6; i++)
+			{
+				map[dir[entry + i]] = 0;
+			}
+		}
+		*/
+	}
 
 /*
 	//debugging, should print the contents of the file, works! For some reason, other printString calls don't work.
@@ -416,6 +447,8 @@ void deleteFile(char* filename)
 		//no sectors read? then print an error
 		//printString("file does not exist to be deleted\r\n");
 */
+	writeSector(dir, 2);
+	writeSector(map, 1);
 }
 
 
