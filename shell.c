@@ -3,6 +3,7 @@ int fileType(char* string);
 int executeFile(char* string);
 int listDir(char* string);
 int deleteFile(char* string);
+int cpFile(char* string);
 int main2();
 
 //void type(char* filename);
@@ -15,6 +16,7 @@ char type [] = "type";
 char execute [] = "exec";
 char dir [] = "dir";
 char del [] = "del";
+char cp [] = "cp";
 
 char lines[100];
 char badCommand [] = "File Not Found, Try again \r \n";
@@ -110,6 +112,60 @@ int main2()
 			//syscall(0, lines + 4, 0, 0);
 
 			syscall(7, lines + 4, 0, 0);
+		}
+		else if(cpFile(lines) == 1)
+		{
+			//debugging statement
+			//syscall(0, "cpFile works!", 0, 0);
+
+			//starting from lines[3] (cp space = first 3 letters], get filename 1 until a space, 
+			//then filename2 begins and should be stored until end of line is reached (enter)
+			//once get the filenames, copy the bytes from filename 1 into filename2
+			int currentCharIndex = 3;
+			int indexFile1 = 0;
+			int indexFile2 = 0;
+			char currentChar = lines[3];
+			char filename1[];
+			char filename2[];
+
+			//get filename 1
+			while(currentChar != 0x20)
+			{	
+				//debugging
+				syscall(0, "currentChar is", 0, 0);
+				syscall(9, currentChar, 0, 0);
+
+				//if character is enter, not enough filenames entered
+				if(currentChar == 0x0A)
+				{
+					syscall(0, "Not enough arguments for copy file, input two file names");
+					break;
+				}
+				currentChar = lines[currentCharIndex];
+				filename1[indexFile1] = lines[currentCharIndex];
+				indexFile1++;
+				currentCharIndex++;
+			}
+			
+			//increment currentCharIndex to get past the space			
+			currentCharIndex++;	
+
+			//debugging
+			syscall(0, "filename1", 0, 0);
+			syscall(0, filename1, 0, 0);
+
+			//get filename2
+			while(currentChar != 0x0A)
+			{
+				currentChar = lines[currentCharIndex + indexFile2];
+				filename2[indexFile2] = lines[currentCharIndex + indexFile2];
+				indexFile2++;
+				currentCharIndex++;
+			}
+
+			//debugging
+			syscall(0, "filename2", 0, 0);
+			syscall(0, filename2, 0, 0);
 		}
 
 		else
@@ -215,6 +271,24 @@ int deleteFile(char* string)
 			break;
 		}
 
+		i++;
+	}
+	return index;
+}
+
+//function to recognize "cp" command
+int cpFile(char* string)
+{
+	int i = 0;
+	int index = 1;
+	
+	while(i < 2) //searching for "cp"
+	{
+		if(string[i] != cp[i])
+		{
+			index = 0;
+			break;
+		}
 		i++;
 	}
 	return index;

@@ -566,7 +566,11 @@ void handleInterrupt21(int ax, int bx, int cx, int dx)
 	{
 		writeFile(bx, cx, dx);
 	}
-	else if(ax >= 9)
+	else if(ax == 9)
+	{
+		printChar(bx);
+	}
+	else if(ax >= 10)
 	{
 		printString("Invalid value for AX. No function available! Please try again.");
 	}
