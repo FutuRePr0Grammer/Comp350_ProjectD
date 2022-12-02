@@ -104,7 +104,7 @@ void main()
 
 
 	//test call for writeFile
-	interrupt(0x21, 8, "this is a test message", "testmg", 3);	
+	interrupt(0x21, 8, "this is a test message", "tstmsg", 3);	
 
 	//call shell
 	interrupt(0x21, 4, "shell", 0, 0);
@@ -346,6 +346,8 @@ void writeFile(char* buffer, char* filename, int numberOfSectors)
 	char dir[512];
 	int sectorNumber = 0;
 
+	int index;
+
 	int entry;
 
 	int directoryLocation;
@@ -358,8 +360,12 @@ void writeFile(char* buffer, char* filename, int numberOfSectors)
 	{
 		if(dir[entry] == 0)
 		{
-			dir[entry] = filename;
-			directoryLocation = entry;
+			//if first byte is zero, set first six bytes to the file name in the directory
+			for(index = 0; index < 6; index++)
+			{
+				dir[entry + index] = filename[index];
+				directoryLocation = entry;
+			}
 			break;
 		}
 	}
@@ -394,6 +400,7 @@ void writeFile(char* buffer, char* filename, int numberOfSectors)
 	//write the map and directory back to the disk
 	writeSector(map, 1);
 	writeSector(dir, 2);
+
 }
 
 
@@ -457,7 +464,8 @@ void deleteFile(char* filename)
 	{	
 		for(entry = 0; entry < 512; entry += 32)
 		{
-			if(dir[entry] == filename[0])
+			if(dir[entry] == filename[0] && dir[entry + 1] == filename[1] && dir[entry+3] == filename[3]
+				&& dir[entry + 4] == filename[4] && dir[entry + 5] == filename[5])
 			{
 				//printChar(filename[0]);
 				//printChar(dir[entry]);
@@ -492,6 +500,7 @@ void deleteFile(char* filename)
 */
 	writeSector(dir, 2);
 	writeSector(map, 1);
+
 }
 
 
