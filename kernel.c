@@ -352,6 +352,8 @@ void writeFile(char* buffer, char* filename, int numberOfSectors)
 
 	int directoryLocation;
 
+	int sectorIndex = 0;
+
 	readSector(map, 1);
 	readSector(dir, 2);
 
@@ -375,12 +377,24 @@ void writeFile(char* buffer, char* filename, int numberOfSectors)
 	//find empty sector in the map to figure out where to put the file in memory (start at 3 so don't overwrite the bootloader etc.)
 	for(sectorNumber = 3; sectorNumber < 512; sectorNumber++)
 	{
+/*		while(numberOfSectors > 0)
+		{
+			if(map[sectorNumber] == 0)
+			{
+				map[sectorNumber] = 0xff;
+				//put sector number for the file in the 6th byte of the directory entry for that file
+				dir[directoryLocation + 6 + sectorIndex] = sectorNumber;
+				//write the contents of the buffer (the contents of the file) into that sector using writeSector
+				writeSector(buffer, sectorNumber);
+				//break;
+			}
+			numberOfSectors--;
+			sectorIndex++;
+		}*/
 		if(map[sectorNumber] == 0)
 		{
 			map[sectorNumber] = 0xff;
-			//put sector number for the file in the 6th byte of the directory entry for that file
 			dir[directoryLocation + 6] = sectorNumber;
-			//write the contents of the buffer (the contents of the file) into that sector using writeSector
 			writeSector(buffer, sectorNumber);
 			break;
 		}
