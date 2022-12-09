@@ -175,27 +175,33 @@ int main2()
 
 			//syscall(0, "In copyFile\n", 0, 0);
 
+			//resetting the buffer
 			for(bufferIndex = 0; bufferIndex < 13312; bufferIndex++)
 			{
 				buffer[bufferIndex] = '\0';
 			}
 
+			//getting filename 1 (original file)
 			for(file1Index = 0; file1Index < 6; file1Index++)
 			{
 				filename1[file1Index] = lines[file1Index + 3];
 			}
+	
+			//debugging
+			//syscall(0, filename1, 0, 0);
 
-			syscall(0, filename1, 0, 0);
-
+			//getting filename 2 (new file)
 			for(file2Index = 0; file2Index < 6; file2Index++)
 			{
 				filename2[file2Index] = lines[file2Index + 10];
 			}
 
-			syscall(0, filename2, 0, 0);
+			//debugging
+			//syscall(0, filename2, 0, 0);
 
+			//reading filename 1 into the buffer
 			syscall(3, filename1, buffer, &sectorsRead);
-
+			//if there was more than zero sectors read, the filename was found, writeFile is called to write the file to file 2 (new file)
 			if(sectorsRead > 0)
 			{
 				syscall(8, buffer, filename2, sectorsRead);
@@ -209,7 +215,11 @@ int main2()
 
 			char fileName[6];
 			int filenameIndex;
-			char newInput[100];
+			char newInput[30];
+			char finalInput[100];
+			int finalInputIndex = 0;
+			char nextChar;
+			int copyIndex;
 
 			//get the filename to be created
 			for(filenameIndex = 0; filenameIndex < 6; filenameIndex++)
@@ -219,10 +229,52 @@ int main2()
 
 			//debugging
 			//syscall(0, lines, 0, 0);
-			syscall(0, fileName, 0, 0);
+			//syscall(0, fileName, 0, 0);
 
 			//test to write the file properly
-			syscall(8, "Test", fileName, 0);
+			//syscall(8, "Test", fileName, 0);
+
+			//giving the user a prompt to enter lines until they type end
+			syscall(0, "Enter the info you would like in the file. Type end to finish writing to the new file\n", 0, 0);
+
+			//now, need to ask for lines until the user enters an empty line, store these in a buffer
+			//while the first character input by the user is not ENTER (\n or 0x0A in hex), keep reading lines
+			while(1)
+			{
+				if(newInput[0] == 'e' && newInput[1] == 'n' && newInput[2] == 'd')
+				{
+					syscall(0, "User entered end, breaking", 0, 0);
+					break;
+				}
+				else
+				{
+					//call readFile
+					syscall(1, newInput, 0, 0);
+
+					nextChar = newInput[0];
+
+					//print the line - debugging
+					//syscall(0, newInput, 0, 0);
+
+					copyIndex = 0;
+
+					//write the line to another array storing the full input
+					while(nextChar != '\0' && copyIndex < 30)
+					{
+						finalInput[finalInputIndex] = newInput[copyIndex];
+						finalInputIndex++;
+						copyIndex++;
+						nextChar = newInput[copyIndex];
+					}
+				}
+
+				//test print of finalInput
+				//syscall(0, finalInput, 0, 0);
+
+				//writing filename and the user input for the contents into a new file
+				syscall(8, finalInput, fileName, 0);
+			}
+ 
 		}
 
 		else

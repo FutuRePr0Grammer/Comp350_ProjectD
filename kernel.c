@@ -102,7 +102,7 @@ void main()
 
 
 	//test call for writeFile
-	interrupt(0x21, 8, "this is a test message", "tstmsg", 3);	
+	//interrupt(0x21, 8, "this is a test message", "tstmsg", 3);	
 
 	//call shell
 	interrupt(0x21, 4, "shell", 0, 0);
