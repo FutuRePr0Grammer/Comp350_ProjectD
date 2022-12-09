@@ -4,6 +4,7 @@ int executeFile(char* string);
 int listDir(char* string);
 int deleteFile(char* string);
 int cpFile(char* string);
+int createFile(char* string);
 int main2();
 
 //void type(char* filename);
@@ -17,6 +18,7 @@ char execute [] = "exec";
 char dir [] = "dir";
 char del [] = "del";
 char cp [] = "cp";
+char create [] = "create";
 
 char lines[100];
 char badCommand [] = "File Not Found, Try again \r \n";
@@ -46,20 +48,16 @@ int main2()
 
 /*
 	// Different approach for getting 'type' instead of my function fileType
-
 		// loades the file
 		if(lines[0] == 't' && lines[1] == 'y' && lines[2] == 'p' && lines[3] == 'e')
 		{
                         syscall( 3, lines + 5, buffer, 0);
                         syscall(0, buffer, 0, 0);
-
 		}
-
 		else if(lines[0] == 'e' && lines[1] == 'x' && lines[2] == 'e' && lines[3] == 'c')
 		{
 			type(lines, filename, 5);
 		}
-
 		else
 		{
                         syscall(0, badCommand, 0, 0);
@@ -116,7 +114,7 @@ int main2()
 		else if(cpFile(lines) == 1)
 		{
 			//debugging statement
-			//syscall(0, "cpFile works!", 0, 0);
+/*			//syscall(0, "cpFile works!", 0, 0);
 
 			//starting from lines[3] (cp space = first 3 letters], get filename 1 until a space, 
 			//then filename2 begins and should be stored until end of line is reached (enter)
@@ -166,6 +164,62 @@ int main2()
 			//debugging
 			syscall(0, "filename2", 0, 0);
 			syscall(0, filename2, 0, 0);
+*/
+
+			int file1Index;
+			int file2Index;
+			char filename1[];
+			char filename2[];
+			int bufferIndex;
+			int sectorsRead;
+
+			//syscall(0, "In copyFile\n", 0, 0);
+
+			for(bufferIndex = 0; bufferIndex < 13312; bufferIndex++)
+			{
+				buffer[bufferIndex] = '\0';
+			}
+
+			for(file1Index = 0; file1Index < 6; file1Index++)
+			{
+				filename1[file1Index] = lines[file1Index + 3];
+			}
+
+			syscall(0, filename1, 0, 0);
+
+			for(file2Index = 0; file2Index < 6; file2Index++)
+			{
+				filename2[file2Index] = lines[file2Index + 10];
+			}
+
+			syscall(0, filename2, 0, 0);
+
+			syscall(3, filename1, buffer, &sectorsRead);
+
+			if(sectorsRead > 0)
+			{
+				syscall(8, buffer, filename2, sectorsRead);
+			}
+		}
+
+		else if(createFile(lines) == 1)
+		{
+			//debugging
+			//syscall(0, "Create file recognized\n", 0, 0);
+
+			char fileName[];
+			int filenameIndex;
+
+			//get the filename to be created
+			for(filenameIndex = 0; filenameIndex < 6; filenameIndex++)
+			{
+				fileName[filenameIndex] = lines[filenameIndex + 7];
+			}
+
+			//debugging
+			//syscall(0, lines, 0, 0);
+			//syscall(0, fileName, 0, 0);
+			syscall(8, "Test", fileName, 0);
 		}
 
 		else
@@ -178,18 +232,15 @@ int main2()
 
 /*
 // function to read file
-
 void type(char* filename)
 {
 	int sectorsRead;
-
 	while(1);
 	syscall(3,buffer, filename, &sectorsRead);
 	if(sectorsRead==0)
 		syscall(0, "File Not Found, Try Again! \r\n");
 	else
 		syscall(0, buffer);
-
 }
 */
 
@@ -285,6 +336,24 @@ int cpFile(char* string)
 	while(i < 2) //searching for "cp"
 	{
 		if(string[i] != cp[i])
+		{
+			index = 0;
+			break;
+		}
+		i++;
+	}
+	return index;
+}
+
+//function to recognize "create" command
+int createFile(char* string)
+{
+	int i = 0;
+	int index = 1;
+
+	while(i < 6)
+	{
+		if(string[i] != create[i])
 		{
 			index = 0;
 			break;

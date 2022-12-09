@@ -53,11 +53,9 @@ void main()
 /*	printString("Enter a line: ");
 	readString(line);
 	printString(line);
-
 	//char buffer[512];
 	readSector(buffer, 30);
 	printString(buffer);
-
 */
 
 	//debugging statement for writeSector
@@ -177,7 +175,6 @@ void readString(char* line)
 
 /*	if(i == 0xd)
 	{
-
 		index++;	
 		//adding line feed to end of the array and printing it
 		*(line + index) = 0xa;
@@ -594,6 +591,4 @@ void terminate()
 	while(1);
 
 }
-
-
 
