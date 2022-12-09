@@ -168,8 +168,8 @@ int main2()
 
 			int file1Index;
 			int file2Index;
-			char filename1[];
-			char filename2[];
+			char filename1[6];
+			char filename2[6];
 			int bufferIndex;
 			int sectorsRead;
 
@@ -207,8 +207,9 @@ int main2()
 			//debugging
 			//syscall(0, "Create file recognized\n", 0, 0);
 
-			char fileName[];
+			char fileName[6];
 			int filenameIndex;
+			char newInput[100];
 
 			//get the filename to be created
 			for(filenameIndex = 0; filenameIndex < 6; filenameIndex++)
@@ -218,7 +219,9 @@ int main2()
 
 			//debugging
 			//syscall(0, lines, 0, 0);
-			//syscall(0, fileName, 0, 0);
+			syscall(0, fileName, 0, 0);
+
+			//test to write the file properly
 			syscall(8, "Test", fileName, 0);
 		}
 
