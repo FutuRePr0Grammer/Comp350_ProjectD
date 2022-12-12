@@ -5,4 +5,5 @@ To test: Compile the code "./CompileOS.sh" -> open the simulator "java -jar simu
 	"end" -> the file is created. Type "dir" to see it. Type "type <filename> to print the contents. Type "del <filename> to delete it. 
 	It is no longer available to see when you type "dir" and you cannot print the contents. 
 
+NOTE: All filenames must be six characters long for the program to work.
 Github Repo: https://github.com/FutuRePr0Grammer/Comp350_ProjectD
