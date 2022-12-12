@@ -1,8 +1,8 @@
 Group Members: David Rochon and Joao Alves
-This project is not fully finished. For some reason, "type tstpr2" or "exec tstpr2" etc. does nothing, but the second you type "type messag" it will print
-	the message in message.txt no matter what. So if you type "exec tstpr2" after that, it will print what's in message.txt again.
-Link to Github:https://github.com/FutuRePr0Grammer/Comp350_ProjectC/tree/main
-To test: Compile the code "./CompileOS.sh" -> open the simulator "java -jar simulator.jar" -> type "type <filename>" or "exec <filename>" 
-	NOTE: messag is the only filename that works.
+This project is fully finished. However, you must type "end" to end a file you are creating. Also if you enter multiple lines, it will add each to its 
+	own file with the same name and you can only type the first line, but they are all there!
+To test: Compile the code "./CompileOS.sh" -> open the simulator "java -jar simulator.jar" -> type "create <filename> and type a line. Hit enter, type
+	"end" -> the file is created. Type "dir" to see it. Type "type <filename> to print the contents. Type "del <filename> to delete it. 
+	It is no longer available to see when you type "dir" and you cannot print the contents. 
 
-	UPDATE: FIXED, EVERYTHING WORKS AS INTENDED NOW
+Github Repo: https://github.com/FutuRePr0Grammer/Comp350_ProjectD
